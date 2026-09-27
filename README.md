@@ -23,8 +23,6 @@ Open http://127.0.0.1:4173. No package installation or build needed.
 
 ## Deploy
 
-Every push to `main` that touches `site/dist/` publishes that folder to GitHub Pages via `.github/workflows/deploy-pages.yml` (it can also be run by hand from the Actions tab). Live site: https://zaynoaziz1-hue.github.io/pave-the-way-rn-website/
-
-If the first run fails at the Pages setup step, open Settings > Pages and set Source to "GitHub Actions", then re-run the workflow. All asset paths are relative, so the site works under the project path.
+The repo is connected to Vercel. `vercel.json` tells Vercel to serve `site/dist/` as-is (no build step), so every push to `main` updates the live site at https://pave-the-way-rn-website.vercel.app and every pull request gets a preview link. All asset paths are relative, so the folder can also be hosted anywhere else unchanged.
 
 Contact actions open the visitor’s phone/email app. Google reviews are verified excerpts with a dated rating snapshot and links to Google; not a live review feed. Typography uses Google Fonts with local system fallbacks.
