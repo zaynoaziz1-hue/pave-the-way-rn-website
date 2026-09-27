@@ -21,6 +21,8 @@ Open http://127.0.0.1:4173. No package installation or build needed.
 - `asset-pack/pave-the-way/project-notes.md`: source records, asset map, motion budget.
 - Original uploaded files remain at repository root.
 
-Deploy the contents of `site/dist/` when ready. All local asset paths are relative, including for a GitHub Pages project path. No deployment or GitHub upload has been performed.
+## Deploy
+
+The repo is connected to Vercel. `vercel.json` tells Vercel to serve `site/dist/` as-is (no build step), so every push to `main` updates the live site at https://pave-the-way-rn-website.vercel.app and every pull request gets a preview link. All asset paths are relative, so the folder can also be hosted anywhere else unchanged.
 
 Contact actions open the visitor’s phone/email app. Google reviews are verified excerpts with a dated rating snapshot and links to Google; not a live review feed. Typography uses Google Fonts with local system fallbacks.
