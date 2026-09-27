@@ -45,3 +45,35 @@ reduceMotion.addEventListener('change', e => { if(e.matches) video.pause(); });
 new IntersectionObserver(([entry]) => { if(!entry.isIntersecting) video.pause(); else if(!manuallyPaused && !reduceMotion.matches && document.visibilityState === 'visible') video.play().catch(syncMotion); }, {threshold:.05}).observe(document.querySelector('.hero'));
 document.addEventListener('visibilitychange', () => { if(document.hidden) video.pause(); });
 document.querySelector('#year').textContent = new Date().getFullYear();
+const quoteForm = document.querySelector('#quote-form');
+const formStatus = document.querySelector('#form-status');
+function mailtoFallback(data) {
+  const body = `Name: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email}\nService: ${data.service}\n\n${data.message}`;
+  return `mailto:pavethewayrn@gmail.com?subject=${encodeURIComponent('Quote request from ' + data.name)}&body=${encodeURIComponent(body)}`;
+}
+quoteForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const phone = quoteForm.elements.phone, email = quoteForm.elements.email;
+  const missingContact = !phone.value.trim() && !email.value.trim();
+  [phone, email].forEach(input => input.classList.toggle('contact-missing', missingContact));
+  if (missingContact) { formStatus.className = 'form-status error'; formStatus.textContent = 'Please add a phone number or email so we can reach you.'; phone.focus(); return; }
+  const data = Object.fromEntries(new FormData(quoteForm));
+  if (data._honey) return;
+  const button = quoteForm.querySelector('button');
+  button.disabled = true;
+  formStatus.className = 'form-status';
+  formStatus.textContent = 'Sending your request…';
+  try {
+    const response = await fetch(quoteForm.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || String(result.success) !== 'true') throw new Error(result.message || 'Request failed');
+    quoteForm.reset();
+    formStatus.className = 'form-status success';
+    formStatus.textContent = `Thank you, ${data.name.split(' ')[0]}! We received your request and will be in touch soon.`;
+  } catch {
+    formStatus.className = 'form-status error';
+    formStatus.innerHTML = 'Sorry, your request didn’t go through. <a>Email it to us instead</a> or call <a href="tel:+12393450195">(239) 345-0195</a>.';
+    formStatus.querySelector('a').href = mailtoFallback(data);
+  } finally { button.disabled = false; }
+});
+[quoteForm.elements.phone, quoteForm.elements.email].forEach(input => input.addEventListener('input', () => { quoteForm.elements.phone.classList.remove('contact-missing'); quoteForm.elements.email.classList.remove('contact-missing'); }));
